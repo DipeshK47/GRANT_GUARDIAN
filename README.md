@@ -152,7 +152,7 @@ Notion is the source of truth. All agent outputs are written directly to linked 
 | Notion Integration | Notion MCP |
 | Browser Automation | Playwright |
 | Database | SQLite + Drizzle ORM |
-| AI / NLP | OpenAI (GPT-4, text-embedding-3-large) |
+| AI / NLP | Gemini/OpenAI (GPT-4,Gemini-2.5, text-embedding-3-large) |
 | Funder Data | ProPublica Nonprofit Explorer API |
 | Filing Parsing | XML + PDF parsers for 990-PF filings |
 | Optional UI | Next.js operator dashboard |
@@ -168,7 +168,7 @@ grant-guardian/
 │   ├── orchestrator/          # Core AI orchestrator
 │   │   └── src/
 │   │       ├── agents/        # All agent implementations
-│   │       ├── services/      # Notion, ProPublica, OpenAI, etc.
+│   │       ├── services/      # Notion, ProPublica, Gemini/OpenAI, etc.
 │   │       ├── workflows/     # End-to-end workflow runners
 │   │       ├── scoring/       # Fit, priority, DNA scoring
 │   │       └── db/            # Schema and migrations
@@ -199,7 +199,7 @@ grant-guardian/
 - Node.js 18+
 - pnpm
 - Notion account with MCP enabled
-- OpenAI API key
+- Gemini/OpenAI API key
 - Playwright (for Submittable automation)
 
 ### 1. Clone the repo
@@ -218,7 +218,7 @@ cp .env.example .env
 
 Fill in:
 ```env
-OPENAI_API_KEY=your_key_here
+GEMINI/OPENAI_API_KEY=your_key_here
 NOTION_MCP_SERVER_URL=your_mcp_server_url
 NOTION_OAUTH_CLIENT_ID=your_client_id
 NOTION_OAUTH_CLIENT_SECRET=your_client_secret

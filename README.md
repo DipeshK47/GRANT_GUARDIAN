@@ -48,8 +48,8 @@ Most small nonprofit teams do not have a dedicated grant operations function. Th
 
 If you want the end-to-end product flow for a brand-new user, start here:
 
-- [New User Guide](/Users/dipeshkumar/Desktop/grant_guardian/docs/new-user-guide.md)
-- [Local Launch Checklist](/Users/dipeshkumar/Desktop/grant_guardian/docs/local-launch-checklist.md)
+- [New User Guide](docs/new-user-guide.md)
+- [Local Launch Checklist](docs/local-launch-checklist.md)
 
 ## Submittable session capture
 

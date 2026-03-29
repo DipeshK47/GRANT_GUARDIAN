@@ -1,0 +1,22 @@
+CREATE TABLE `submission_field_mappings` (
+	`id` text PRIMARY KEY NOT NULL,
+	`created_at` text NOT NULL,
+	`updated_at` text NOT NULL,
+	`submission_session_id` text NOT NULL,
+	`submission_id` text NOT NULL,
+	`opportunity_id` text NOT NULL,
+	`requirement_id` text,
+	`field_label` text NOT NULL,
+	`field_type` text NOT NULL,
+	`source_kind` text NOT NULL,
+	`source_record_id` text,
+	`fill_action` text NOT NULL,
+	`mapping_status` text NOT NULL,
+	`planned_value` text,
+	`artifact_title` text,
+	`matched_portal_label` text,
+	`confidence` real,
+	`needs_human_review` integer NOT NULL,
+	`notes` text,
+	`last_attempted_at` text
+);

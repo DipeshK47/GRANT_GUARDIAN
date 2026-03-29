@@ -1,0 +1,10 @@
+Internal demo file for local testing only.
+
+Organization: Bridgelight Youth Foundation
+Document Type: IRS 501(c)(3) Determination Letter
+EIN: 47-2381956
+Effective Date: 2014-08-12
+
+The Internal Revenue Service recognizes Bridgelight Youth Foundation as exempt from federal income tax under section 501(c)(3) of the Internal Revenue Code.
+
+This file exists as a local upload artifact for Grant Guardian manual website testing.

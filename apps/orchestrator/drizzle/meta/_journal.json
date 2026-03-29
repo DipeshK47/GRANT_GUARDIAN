@@ -1,0 +1,104 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1774641336271,
+      "tag": "0000_narrow_metal_master",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1774663578772,
+      "tag": "0001_lowly_puma",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1774670100000,
+      "tag": "0002_thin_packet_guard",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1774672500000,
+      "tag": "0003_bold_handoff_guard",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1774674600000,
+      "tag": "0004_brisk_field_map",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1774680600000,
+      "tag": "0005_clever_portal_profiles",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1774687800000,
+      "tag": "0006_sturdy_upload_artifacts",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1774689900000,
+      "tag": "0007_candid_customer_scope",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1774691700000,
+      "tag": "0008_swift_portal_discovery",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1774694700000,
+      "tag": "0009_brave_submission_adapters",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1774720800000,
+      "tag": "0010_steady_org_scope",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1774728600000,
+      "tag": "0011_true_clerk_workspace",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1774731600000,
+      "tag": "0012_bold_notion_connections",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "6",
+      "when": 1774737000000,
+      "tag": "0013_open_workspaces",
+      "breakpoints": true
+    }
+  ]
+}

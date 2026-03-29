@@ -1,0 +1,94 @@
+<svg width="100%" viewBox="0 0 680 560" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+
+<!-- Layer 1: Foundation -->
+<rect x="30" y="30" width="620" height="110" rx="14" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5" fill-opacity="0.5"/>
+<text font-size="14" font-weight="600" x="50" y="54" dominant-baseline="central" fill="#444441">Foundation layer</text>
+
+<rect x="50" y="64" width="140" height="56" rx="8" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<text font-size="14" font-weight="600" x="120" y="86" text-anchor="middle" dominant-baseline="central" fill="#2C2C2A">Organization</text>
+<text font-size="12" x="120" y="104" text-anchor="middle" dominant-baseline="central" fill="#444441">source of truth</text>
+
+<rect x="210" y="64" width="130" height="56" rx="8" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<text font-size="14" font-weight="600" x="275" y="86" text-anchor="middle" dominant-baseline="central" fill="#2C2C2A">Programs</text>
+<text font-size="12" x="275" y="104" text-anchor="middle" dominant-baseline="central" fill="#444441">evidence base</text>
+
+<rect x="360" y="64" width="120" height="56" rx="8" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<text font-size="14" font-weight="600" x="420" y="86" text-anchor="middle" dominant-baseline="central" fill="#2C2C2A">Documents</text>
+<text font-size="12" x="420" y="104" text-anchor="middle" dominant-baseline="central" fill="#444441">501c3, audit, etc.</text>
+
+<rect x="500" y="64" width="120" height="56" rx="8" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<text font-size="14" font-weight="600" x="560" y="86" text-anchor="middle" dominant-baseline="central" fill="#2C2C2A">Budgets</text>
+<text font-size="12" x="560" y="104" text-anchor="middle" dominant-baseline="central" fill="#444441">financial records</text>
+
+<!-- Layer 2: Intelligence -->
+<rect x="30" y="160" width="620" height="110" rx="14" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5" fill-opacity="0.5"/>
+<text font-size="14" font-weight="600" x="50" y="184" dominant-baseline="central" fill="#3C3489">Intelligence layer</text>
+
+<rect x="50" y="194" width="150" height="56" rx="8" fill="#CECBF6" stroke="#534AB7" stroke-width="0.5"/>
+<text font-size="14" font-weight="600" x="125" y="216" text-anchor="middle" dominant-baseline="central" fill="#26215C">Funders</text>
+<text font-size="12" x="125" y="234" text-anchor="middle" dominant-baseline="central" fill="#3C3489">990 data + DNA</text>
+
+<rect x="220" y="194" width="160" height="56" rx="8" fill="#CECBF6" stroke="#534AB7" stroke-width="0.5"/>
+<text font-size="14" font-weight="600" x="300" y="216" text-anchor="middle" dominant-baseline="central" fill="#26215C">Opportunities</text>
+<text font-size="12" x="300" y="234" text-anchor="middle" dominant-baseline="central" fill="#3C3489">fit score + status</text>
+
+<rect x="400" y="194" width="150" height="56" rx="8" fill="#CECBF6" stroke="#534AB7" stroke-width="0.5"/>
+<text font-size="14" font-weight="600" x="475" y="216" text-anchor="middle" dominant-baseline="central" fill="#26215C">Evidence library</text>
+<text font-size="12" x="475" y="234" text-anchor="middle" dominant-baseline="central" fill="#3C3489">reusable assets</text>
+
+<!-- Layer 3: Production -->
+<rect x="30" y="290" width="620" height="110" rx="14" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5" fill-opacity="0.5"/>
+<text font-size="14" font-weight="600" x="50" y="314" dominant-baseline="central" fill="#085041">Production layer</text>
+
+<rect x="50" y="324" width="140" height="56" rx="8" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.5"/>
+<text font-size="14" font-weight="600" x="120" y="346" text-anchor="middle" dominant-baseline="central" fill="#04342C">Requirements</text>
+<text font-size="12" x="120" y="364" text-anchor="middle" dominant-baseline="central" fill="#085041">per question</text>
+
+<rect x="210" y="324" width="140" height="56" rx="8" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.5"/>
+<text font-size="14" font-weight="600" x="280" y="346" text-anchor="middle" dominant-baseline="central" fill="#04342C">Draft answers</text>
+<text font-size="12" x="280" y="364" text-anchor="middle" dominant-baseline="central" fill="#085041">cited evidence</text>
+
+<rect x="370" y="324" width="120" height="56" rx="8" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.5"/>
+<text font-size="14" font-weight="600" x="430" y="346" text-anchor="middle" dominant-baseline="central" fill="#04342C">Tasks</text>
+<text font-size="12" x="430" y="364" text-anchor="middle" dominant-baseline="central" fill="#085041">assignee + deadline</text>
+
+<rect x="510" y="324" width="110" height="56" rx="8" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.5"/>
+<text font-size="14" font-weight="600" x="565" y="346" text-anchor="middle" dominant-baseline="central" fill="#04342C">Reviews</text>
+<text font-size="12" x="565" y="364" text-anchor="middle" dominant-baseline="central" fill="#085041">human approvals</text>
+
+<!-- Layer 4: Completion -->
+<rect x="30" y="420" width="620" height="110" rx="14" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.5" fill-opacity="0.5"/>
+<text font-size="14" font-weight="600" x="50" y="444" dominant-baseline="central" fill="#633806">Completion layer</text>
+
+<rect x="50" y="454" width="130" height="56" rx="8" fill="#FAC775" stroke="#854F0B" stroke-width="0.5"/>
+<text font-size="14" font-weight="600" x="115" y="476" text-anchor="middle" dominant-baseline="central" fill="#412402">Submissions</text>
+<text font-size="12" x="115" y="494" text-anchor="middle" dominant-baseline="central" fill="#633806">portal confirmation</text>
+
+<rect x="200" y="454" width="160" height="56" rx="8" fill="#FAC775" stroke="#854F0B" stroke-width="0.5"/>
+<text font-size="14" font-weight="600" x="280" y="476" text-anchor="middle" dominant-baseline="central" fill="#412402">Reporting calendar</text>
+<text font-size="12" x="280" y="494" text-anchor="middle" dominant-baseline="central" fill="#633806">post-award tasks</text>
+
+<rect x="380" y="454" width="130" height="56" rx="8" fill="#FAC775" stroke="#854F0B" stroke-width="0.5"/>
+<text font-size="14" font-weight="600" x="445" y="476" text-anchor="middle" dominant-baseline="central" fill="#412402">Agent logs</text>
+<text font-size="12" x="445" y="494" text-anchor="middle" dominant-baseline="central" fill="#633806">every step recorded</text>
+
+<!-- Vertical flow arrows -->
+<line x1="340" y1="140" x2="340" y2="158" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="340" y1="270" x2="340" y2="288" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="340" y1="400" x2="340" y2="418" stroke="#888780" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<!-- Legend -->
+<rect x="88" y="542" width="10" height="10" rx="2" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<text font-size="12" x="104" y="550" fill="#444441">foundation</text>
+<rect x="200" y="542" width="10" height="10" rx="2" fill="#CECBF6" stroke="#534AB7" stroke-width="0.5"/>
+<text font-size="12" x="216" y="550" fill="#444441">intelligence</text>
+<rect x="308" y="542" width="10" height="10" rx="2" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.5"/>
+<text font-size="12" x="324" y="550" fill="#444441">production</text>
+<rect x="412" y="542" width="10" height="10" rx="2" fill="#FAC775" stroke="#854F0B" stroke-width="0.5"/>
+<text font-size="12" x="428" y="550" fill="#444441">completion</text>
+</svg>

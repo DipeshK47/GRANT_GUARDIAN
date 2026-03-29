@@ -1,0 +1,24 @@
+{
+  "name": "@grant-guardian/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "predev": "node ./scripts/predev-clean.mjs",
+    "dev": "node ./scripts/run-next-with-root-env.mjs dev -p 3000",
+    "build": "node ./scripts/run-next-with-root-env.mjs build",
+    "start": "node ./scripts/run-next-with-root-env.mjs start -p 3000",
+    "typecheck": "node ../../node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
+    "lint": "node ../../node_modules/eslint/bin/eslint.js src --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^7.0.7",
+    "@grant-guardian/shared": "file:../../packages/shared",
+    "next": "^15.2.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.14"
+  }
+}

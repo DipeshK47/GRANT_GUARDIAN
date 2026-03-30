@@ -268,8 +268,8 @@ export default function HomePage() {
             <div>Notion-native grant intelligence for lean nonprofit teams.</div>
           </div>
           <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-            <a href="https://github.com" style={{ color: "#0f766e", textDecoration: "none" }}>
-              GitHub
+            <a href="https://github.com/DipeshK47/GRANT_GUARDIAN" style={{ color: "#0f766e", textDecoration: "none" }}>
+              GitHub Repo
             </a>
             <Link href="/sign-in" style={{ color: "#0f766e", textDecoration: "none" }}>
               Sign in

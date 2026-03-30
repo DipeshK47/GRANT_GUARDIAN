@@ -151,6 +151,11 @@ export function OnboardingClient({
   const [message, setMessage] = useState<string | null>(null);
 
   const progressPercent = useMemo(() => (currentStep / 4) * 100, [currentStep]);
+  const activeOrganizationId = (organization?.id ?? existingOrganizationId) || null;
+  const activeOrganization =
+    organization ??
+    organizations.find((record) => record.id === existingOrganizationId) ??
+    null;
 
   const setOrganizationDraft = (nextOrganization: OrganizationSummary | null) => {
     setOrganization(nextOrganization);
@@ -207,19 +212,19 @@ export function OnboardingClient({
   };
 
   useEffect(() => {
-    if (!organization?.id) {
+    if (!activeOrganizationId) {
       setLatestOpportunity(null);
       return;
     }
 
-    void loadLatestOpportunity(organization.id).catch(() => undefined);
-  }, [organization?.id]);
+    void loadLatestOpportunity(activeOrganizationId).catch(() => undefined);
+  }, [activeOrganizationId]);
 
   useEffect(() => {
     const derivedStep =
-      latestOpportunity?.id && organization?.id && notionConnected
+      latestOpportunity?.id && activeOrganizationId && notionConnected
         ? 4
-        : organization?.id && notionConnected
+        : activeOrganizationId && notionConnected
           ? 3
           : notionConnected
             ? 2
@@ -252,7 +257,7 @@ export function OnboardingClient({
     latestOpportunity?.id,
     manualStepSelection,
     notionConnected,
-    organization?.id,
+    activeOrganizationId,
     respectRequestedStep,
   ]);
 
@@ -383,7 +388,7 @@ export function OnboardingClient({
   };
 
   const handleRunIntake = async () => {
-    if (!organization?.id) {
+    if (!activeOrganizationId) {
       setError("Save the organization profile before adding the first opportunity.");
       return;
     }
@@ -399,7 +404,7 @@ export function OnboardingClient({
           "content-type": "application/json",
         },
         body: JSON.stringify({
-          organizationId: organization.id,
+          organizationId: activeOrganizationId,
           url: normalizeUrlInput(opportunityUrl) || undefined,
           rawText: normalizeText(opportunityText) || undefined,
           syncToNotion: true,
@@ -563,7 +568,7 @@ export function OnboardingClient({
   };
 
   const handleCompleteOnboarding = async () => {
-    if (!organization?.id) {
+    if (!activeOrganizationId || !activeOrganization) {
       setError("Save the organization profile before finishing onboarding.");
       return;
     }
@@ -573,16 +578,16 @@ export function OnboardingClient({
 
     try {
       const response = await fetch(
-        `/api/backend/organizations/${encodeURIComponent(organization.id)}`,
+        `/api/backend/organizations/${encodeURIComponent(activeOrganizationId)}`,
         {
           method: "PATCH",
           headers: {
             "content-type": "application/json",
           },
           body: JSON.stringify({
-            legalName: organization.legalName,
-            ein: organization.ein,
-            mission: organization.mission,
+            legalName: activeOrganization.legalName,
+            ein: activeOrganization.ein,
+            mission: activeOrganization.mission,
             syncToNotion: true,
             onboardingCompleted: true,
           }),
@@ -593,7 +598,7 @@ export function OnboardingClient({
         throw new Error(payload.message || "Failed to complete onboarding.");
       }
 
-      router.push(`/dashboard?organizationId=${encodeURIComponent(organization.id)}`);
+      router.push(`/dashboard?organizationId=${encodeURIComponent(activeOrganizationId)}`);
     } catch (caughtError) {
       setError(
         caughtError instanceof Error ? caughtError.message : "Failed to complete onboarding.",

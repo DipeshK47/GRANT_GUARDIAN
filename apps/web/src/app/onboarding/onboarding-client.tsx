@@ -20,7 +20,7 @@ type OpportunityRecord = {
 
 type OrganizationSaveResult = {
   organizationId: string;
-  organization: OrganizationSummary;
+  organization?: OrganizationSummary;
 };
 
 type IntakeResult = {
@@ -219,6 +219,20 @@ export function OnboardingClient({
     return firstOpportunity;
   };
 
+  const refreshOrganizations = async () => {
+    const response = await fetch("/api/backend/organizations", {
+      cache: "no-store",
+    });
+    if (!response.ok) {
+      throw new Error("Failed to refresh the organization workspaces.");
+    }
+
+    const payload = await parseJson<{ organizations?: OrganizationSummary[] }>(response);
+    const nextOrganizations = payload.organizations ?? [];
+    setOrganizations(nextOrganizations);
+    return nextOrganizations;
+  };
+
   useEffect(() => {
     if (!activeOrganizationId) {
       setLatestOpportunity(null);
@@ -316,19 +330,25 @@ export function OnboardingClient({
         throw new Error(payload.message || "Failed to save the organization profile.");
       }
 
+      const persistedOrganizationId =
+        normalizeText(payload.organization?.id) || normalizeText(payload.organizationId);
+      if (!persistedOrganizationId) {
+        throw new Error("The workspace saved, but Grant Guardian could not recover its id.");
+      }
+
+      const refreshedOrganizations = await refreshOrganizations();
+      const persistedOrganization =
+        payload.organization ??
+        refreshedOrganizations.find((record) => record.id === persistedOrganizationId) ??
+        null;
+
       setWorkspaceMode("existing");
-      setActiveWorkspaceId(payload.organization.id);
-      setExistingOrganizationId(payload.organization.id);
-      setOrganizationDraft(payload.organization);
-      setOrganizations((current) => {
-        const nextOrganizations = current.some((record) => record.id === payload.organization.id)
-          ? current.map((record) =>
-              record.id === payload.organization.id ? payload.organization : record,
-            )
-          : [...current, payload.organization];
-        return nextOrganizations;
-      });
-      setMessage(`Saved ${payload.organization.legalName}.`);
+      setActiveWorkspaceId(persistedOrganizationId);
+      setExistingOrganizationId(persistedOrganizationId);
+      if (persistedOrganization) {
+        setOrganizationDraft(persistedOrganization);
+      }
+      setMessage(`Saved ${persistedOrganization?.legalName ?? organizationName}.`);
       advanceTo(3);
     } catch (caughtError) {
       setError(
@@ -399,23 +419,42 @@ export function OnboardingClient({
   };
 
   const handleRunIntake = async () => {
-    if (!activeOrganizationId) {
-      setError("Save the organization profile before adding the first opportunity.");
-      return;
-    }
-
     setPending("intake");
     setError(null);
     setMessage(null);
 
     try {
+      let organizationIdForIntake = activeOrganizationId;
+      if (!organizationIdForIntake) {
+        const refreshedOrganizations = await refreshOrganizations();
+        const recoveredOrganization =
+          refreshedOrganizations.find((record) => record.id === existingOrganizationId) ??
+          refreshedOrganizations.find(
+            (record) =>
+              normalizeText(record.ein) === normalizeText(ein) ||
+              normalizeText(record.legalName).toLowerCase() === normalizeText(organizationName).toLowerCase(),
+          ) ??
+          null;
+
+        if (recoveredOrganization) {
+          organizationIdForIntake = recoveredOrganization.id;
+          setActiveWorkspaceId(recoveredOrganization.id);
+          setExistingOrganizationId(recoveredOrganization.id);
+          setOrganizationDraft(recoveredOrganization);
+        }
+      }
+
+      if (!organizationIdForIntake) {
+        throw new Error("Save the organization profile before adding the first opportunity.");
+      }
+
       const response = await fetch("/api/backend/intake/opportunity", {
         method: "POST",
         headers: {
           "content-type": "application/json",
         },
         body: JSON.stringify({
-          organizationId: activeOrganizationId,
+          organizationId: organizationIdForIntake,
           url: normalizeUrlInput(opportunityUrl) || undefined,
           rawText: normalizeText(opportunityText) || undefined,
           syncToNotion: true,

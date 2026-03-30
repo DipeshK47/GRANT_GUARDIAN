@@ -102,7 +102,6 @@ export const registerNotionRoutes = (
     try {
       const result = await notionClient.handleOAuthCallback(query);
       const organization = await withRequestContext({ clerkUserId: result.clerkUserId }, async () => {
-        await notionClient.bootstrapWorkspace();
         const [storedOrganization] = await db
           .select({ id: organizations.id, onboardingCompleted: organizations.onboardingCompleted })
           .from(organizations)

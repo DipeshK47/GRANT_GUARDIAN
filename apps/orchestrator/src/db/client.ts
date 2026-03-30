@@ -1,5 +1,6 @@
 import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
+import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import { env } from "../config/env.js";
 import * as schema from "./schema.js";
 
@@ -19,6 +20,12 @@ export const sqlite = new Database(sqlitePath, {
 sqlite.pragma("journal_mode = WAL");
 sqlite.pragma("busy_timeout = 5000");
 sqlite.pragma("foreign_keys = ON");
+
+// Apply bundled migrations automatically so fresh local/hosted SQLite databases
+// are usable without a separate manual migration step.
+migrate(drizzle(sqlite), {
+  migrationsFolder: new URL("../../drizzle", import.meta.url).pathname,
+});
 
 export const db = drizzle(sqlite, {
   schema,

@@ -62,6 +62,14 @@ const normalizeText = (value?: string | null) => (value ?? "").replace(/\s+/g, "
 
 const normalizeEin = (value?: string | null) => (value ?? "").replace(/\D+/g, "");
 
+const isDuplicateConstraintError = (
+  message: string,
+  constraintNames: string[],
+) =>
+  constraintNames.some((constraintName) => message.includes(constraintName)) ||
+  (message.includes("duplicate key value violates unique constraint") &&
+    constraintNames.some((constraintName) => message.includes(`"${constraintName}"`)));
+
 const isPresent = (value?: string | null | number) => {
   if (typeof value === "number") {
     return Number.isFinite(value);
@@ -232,7 +240,7 @@ export class OrganizationProfileService {
           const message = error instanceof Error ? error.message : String(error);
 
           if (
-            message.includes("UNIQUE constraint failed: organizations.id") &&
+            isDuplicateConstraintError(message, ["organizations.id", "organizations_pkey"]) &&
             !requestedOrganizationId
           ) {
             attempts += 1;
@@ -249,8 +257,10 @@ export class OrganizationProfileService {
           }
 
           if (
-            message.includes("UNIQUE constraint failed: organizations.clerk_user_id") ||
-            message.includes("organizations_clerk_user_id_unique")
+            isDuplicateConstraintError(message, [
+              "organizations.clerk_user_id",
+              "organizations_clerk_user_id_unique",
+            ])
           ) {
             throw new Error(
               "This user already has a legacy single-workspace record. Run the latest database migration, then choose the existing workspace or create a new one again.",

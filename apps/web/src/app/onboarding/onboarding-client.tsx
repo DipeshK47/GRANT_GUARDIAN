@@ -129,6 +129,9 @@ export function OnboardingClient({
   const [workspaceMode, setWorkspaceMode] = useState<"existing" | "new">(
     initialOrganizations.length > 0 ? "existing" : "new",
   );
+  const [activeWorkspaceId, setActiveWorkspaceId] = useState(
+    initialOrganization?.id ?? "",
+  );
   const [existingOrganizationId, setExistingOrganizationId] = useState(
     initialOrganization?.id ?? initialOrganizations[0]?.id ?? "",
   );
@@ -151,9 +154,14 @@ export function OnboardingClient({
   const [message, setMessage] = useState<string | null>(null);
 
   const progressPercent = useMemo(() => (currentStep / 4) * 100, [currentStep]);
-  const activeOrganizationId = (organization?.id ?? existingOrganizationId) || null;
+  const activeOrganizationId =
+    normalizeText(activeWorkspaceId) ||
+    normalizeText(organization?.id) ||
+    normalizeText(existingOrganizationId) ||
+    null;
   const activeOrganization =
     organization ??
+    organizations.find((record) => record.id === activeOrganizationId) ??
     organizations.find((record) => record.id === existingOrganizationId) ??
     null;
 
@@ -309,8 +317,9 @@ export function OnboardingClient({
       }
 
       setWorkspaceMode("existing");
+      setActiveWorkspaceId(payload.organization.id);
       setExistingOrganizationId(payload.organization.id);
-      setOrganization(payload.organization);
+      setOrganizationDraft(payload.organization);
       setOrganizations((current) => {
         const nextOrganizations = current.some((record) => record.id === payload.organization.id)
           ? current.map((record) =>
@@ -352,6 +361,7 @@ export function OnboardingClient({
 
     try {
       setWorkspaceMode("existing");
+      setActiveWorkspaceId(selectedOrganization.id);
       setOrganizationDraft(selectedOrganization);
       await loadLatestOpportunity(selectedOrganization.id);
 
@@ -375,6 +385,7 @@ export function OnboardingClient({
 
   const handleStartNewWorkspace = () => {
     setWorkspaceMode("new");
+    setActiveWorkspaceId("");
     setExistingOrganizationId("");
     setOrganizationDraft(null);
     setLatestOpportunity(null);

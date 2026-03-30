@@ -2790,7 +2790,7 @@ export class NotionMcpClient {
         query,
         filter: {
           property: "object",
-          value: "database",
+          value: "data_source",
         },
       }),
     });
@@ -3832,14 +3832,13 @@ export class NotionMcpClient {
         continue;
       }
 
-      const databaseDetails = await this.readDatabase(databaseMatch.id);
       databases.push({
         key: definition.key,
         name: definition.name,
         description: definition.description,
         databaseId: databaseMatch.id,
-        databaseUrl: databaseMatch.url ?? databaseDetails.url,
-        dataSourceId: databaseDetails.data_sources?.[0]?.id,
+        databaseUrl: databaseMatch.url,
+        dataSourceId: databaseMatch.id,
       });
     }
 

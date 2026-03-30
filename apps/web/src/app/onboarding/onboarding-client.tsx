@@ -154,6 +154,9 @@ export function OnboardingClient({
   const [message, setMessage] = useState<string | null>(null);
 
   const progressPercent = useMemo(() => (currentStep / 4) * 100, [currentStep]);
+  const selectedExistingOrganization =
+    organizations.find((record) => record.id === existingOrganizationId) ??
+    (workspaceMode === "existing" && organizations.length === 1 ? organizations[0] : null);
   const activeOrganizationId =
     normalizeText(activeWorkspaceId) ||
     normalizeText(organization?.id) ||
@@ -232,6 +235,25 @@ export function OnboardingClient({
     setOrganizations(nextOrganizations);
     return nextOrganizations;
   };
+
+  useEffect(() => {
+    if (workspaceMode !== "existing" || organizations.length === 0) {
+      return;
+    }
+
+    const hasSelectedWorkspace =
+      normalizeText(existingOrganizationId) !== "" &&
+      organizations.some((record) => record.id === existingOrganizationId);
+
+    if (hasSelectedWorkspace) {
+      return;
+    }
+
+    const fallbackOrganization = organizations.find((record) => normalizeText(record.id) !== "");
+    if (fallbackOrganization) {
+      setExistingOrganizationId(fallbackOrganization.id);
+    }
+  }, [existingOrganizationId, organizations, workspaceMode]);
 
   useEffect(() => {
     if (!activeOrganizationId) {
@@ -362,15 +384,12 @@ export function OnboardingClient({
   };
 
   const handleUseExistingOrganization = async () => {
-    if (!existingOrganizationId) {
+    if (!selectedExistingOrganization) {
       setError("Choose an existing workspace before continuing.");
       return;
     }
 
-    const selectedOrganization =
-      organizations.find((record) => record.id === existingOrganizationId) ?? null;
-
-    if (!selectedOrganization) {
+    if (!normalizeText(selectedExistingOrganization.id)) {
       setError("That workspace could not be loaded. Refresh and try again.");
       return;
     }
@@ -381,16 +400,16 @@ export function OnboardingClient({
 
     try {
       setWorkspaceMode("existing");
-      setActiveWorkspaceId(selectedOrganization.id);
-      setOrganizationDraft(selectedOrganization);
-      await loadLatestOpportunity(selectedOrganization.id);
+      setActiveWorkspaceId(selectedExistingOrganization.id);
+      setOrganizationDraft(selectedExistingOrganization);
+      await loadLatestOpportunity(selectedExistingOrganization.id);
 
-      if (selectedOrganization.onboardingCompleted) {
-        router.push(`/dashboard?organizationId=${encodeURIComponent(selectedOrganization.id)}`);
+      if (selectedExistingOrganization.onboardingCompleted) {
+        router.push(`/dashboard?organizationId=${encodeURIComponent(selectedExistingOrganization.id)}`);
         return;
       }
 
-      setMessage(`Opened ${selectedOrganization.legalName}.`);
+      setMessage(`Opened ${selectedExistingOrganization.legalName}.`);
       advanceTo(3);
     } catch (caughtError) {
       setError(
@@ -890,11 +909,8 @@ export function OnboardingClient({
                         color: "#5e5241",
                       }}
                     >
-                      {existingOrganizationId
-                        ? `${
-                            organizations.find((record) => record.id === existingOrganizationId)?.legalName ??
-                            "Selected workspace"
-                          } is ready to open.`
+                      {selectedExistingOrganization
+                        ? `${selectedExistingOrganization.legalName} is ready to open.`
                         : "Pick a workspace to continue from where you left off."}
                     </div>
                   </div>
@@ -912,7 +928,7 @@ export function OnboardingClient({
                       type="button"
                       style={buttonStyle("primary")}
                       onClick={() => void handleUseExistingOrganization()}
-                      disabled={!existingOrganizationId || pending === "workspace"}
+                      disabled={!selectedExistingOrganization || pending === "workspace"}
                     >
                       {pending === "workspace" ? "Opening..." : "Use selected workspace"}
                     </button>

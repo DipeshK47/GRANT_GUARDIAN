@@ -1,32 +1,46 @@
-import Database from "better-sqlite3";
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import { migrate } from "drizzle-orm/better-sqlite3/migrator";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { Pool } from "pg";
 import { env } from "../config/env.js";
 import * as schema from "./schema.js";
 
-const resolveSqlitePath = () => {
-  const databaseUrl = env.DATABASE_URL.replace(/^file:/, "");
-  return databaseUrl.startsWith(".")
-    ? new URL(`../../../../${databaseUrl}`, import.meta.url).pathname
-    : databaseUrl;
+if (env.DATABASE_URL.startsWith("file:")) {
+  throw new Error(
+    "Grant Guardian now expects a Postgres DATABASE_URL. Point DATABASE_URL at Supabase Postgres before starting the orchestrator.",
+  );
+}
+
+const resolveSslConfig = (databaseUrl: string) => {
+  try {
+    const parsed = new URL(databaseUrl);
+    const hostname = parsed.hostname.toLowerCase();
+    const sslMode = parsed.searchParams.get("sslmode")?.toLowerCase();
+    const isLocalHost = hostname === "localhost" || hostname === "127.0.0.1";
+
+    if (isLocalHost || sslMode === "disable") {
+      return undefined;
+    }
+
+    return {
+      rejectUnauthorized: false,
+    };
+  } catch {
+    return undefined;
+  }
 };
 
-export const sqlitePath = resolveSqlitePath();
-
-export const sqlite = new Database(sqlitePath, {
-  timeout: 5_000,
+export const pool = new Pool({
+  connectionString: env.DATABASE_URL,
+  ssl: resolveSslConfig(env.DATABASE_URL),
+  max: 10,
 });
 
-sqlite.pragma("journal_mode = WAL");
-sqlite.pragma("busy_timeout = 5000");
-sqlite.pragma("foreign_keys = ON");
-
-// Apply bundled migrations automatically so fresh local/hosted SQLite databases
-// are usable without a separate manual migration step.
-migrate(drizzle(sqlite), {
-  migrationsFolder: new URL("../../drizzle", import.meta.url).pathname,
-});
-
-export const db = drizzle(sqlite, {
+export const db = drizzle(pool, {
   schema,
+});
+
+// Apply bundled Postgres migrations automatically so Supabase/hosted databases
+// stay aligned without a separate manual migration step.
+await migrate(db, {
+  migrationsFolder: new URL("../../drizzle-postgres", import.meta.url).pathname,
 });

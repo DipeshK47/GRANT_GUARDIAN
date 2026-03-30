@@ -47,7 +47,7 @@ export type DocumentVaultUploadResult = {
   storedPath: string;
   mimeType: string;
   byteSize: number;
-  storageProvider: "local" | "s3";
+  storageProvider: "local" | "s3" | "supabase";
   storageKey: string;
   fileUrl?: string | null;
   owner?: string | null;

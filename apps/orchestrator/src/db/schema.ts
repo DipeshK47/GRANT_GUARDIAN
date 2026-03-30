@@ -1,5 +1,12 @@
 import { randomUUID } from "node:crypto";
-import { integer, real, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import {
+  boolean,
+  doublePrecision,
+  integer,
+  pgTable,
+  text,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
 
 const baseColumns = {
   id: text("id")
@@ -13,7 +20,7 @@ const baseColumns = {
     .$defaultFn(() => new Date().toISOString()),
 };
 
-export const organizations = sqliteTable(
+export const organizations = pgTable(
   "organizations",
   {
     ...baseColumns,
@@ -24,7 +31,7 @@ export const organizations = sqliteTable(
     foundedYear: integer("founded_year"),
     mission: text("mission").notNull(),
     vision: text("vision"),
-    annualBudget: real("annual_budget"),
+    annualBudget: doublePrecision("annual_budget"),
     staffCount: integer("staff_count"),
     volunteerCount: integer("volunteer_count"),
     executiveDirector: text("executive_director"),
@@ -35,14 +42,12 @@ export const organizations = sqliteTable(
     phone: text("phone"),
     serviceArea: text("service_area"),
     programSummary: text("program_summary"),
-    onboardingCompleted: integer("onboarding_completed", { mode: "boolean" })
-      .notNull()
-      .$defaultFn(() => false),
+    onboardingCompleted: boolean("onboarding_completed").notNull().default(false),
   },
   () => ({}),
 );
 
-export const programs = sqliteTable("programs", {
+export const programs = pgTable("programs", {
   ...baseColumns,
   organizationId: text("organization_id").notNull(),
   name: text("name").notNull(),
@@ -53,20 +58,20 @@ export const programs = sqliteTable("programs", {
   startDate: text("start_date"),
   status: text("status"),
   keyOutcomes: text("key_outcomes"),
-  programBudget: real("program_budget"),
+  programBudget: doublePrecision("program_budget"),
   programLead: text("program_lead"),
   fundingHistory: text("funding_history"),
 });
 
-export const funders = sqliteTable("funders", {
+export const funders = pgTable("funders", {
   ...baseColumns,
   name: text("name").notNull(),
   ein: text("ein"),
   website: text("website"),
   programOfficer: text("program_officer"),
   givingSummary: text("giving_summary"),
-  averageGrant: real("average_grant"),
-  medianGrant: real("median_grant"),
+  averageGrant: doublePrecision("average_grant"),
+  medianGrant: doublePrecision("median_grant"),
   grantRange: text("grant_range"),
   geographicFocus: text("geographic_focus"),
   typicalOrgBudgetSize: text("typical_org_budget_size"),
@@ -78,7 +83,7 @@ export const funders = sqliteTable("funders", {
   lastResearchedAt: text("last_researched_at"),
 });
 
-export const funderFilings = sqliteTable("funder_filings", {
+export const funderFilings = pgTable("funder_filings", {
   ...baseColumns,
   funderId: text("funder_id").notNull(),
   taxYear: integer("tax_year").notNull(),
@@ -86,13 +91,13 @@ export const funderFilings = sqliteTable("funder_filings", {
   sourceUrl: text("source_url").notNull(),
   parsedStatus: text("parsed_status").notNull(),
   grantsCount: integer("grants_count"),
-  grantsTotalAmount: real("grants_total_amount"),
+  grantsTotalAmount: doublePrecision("grants_total_amount"),
   topGeographies: text("top_geographies"),
   topCategories: text("top_categories"),
   snapshotPath: text("snapshot_path"),
 });
 
-export const funderGrantRows = sqliteTable("funder_grant_rows", {
+export const funderGrantRows = pgTable("funder_grant_rows", {
   ...baseColumns,
   funderId: text("funder_id").notNull(),
   filingId: text("filing_id").notNull(),
@@ -101,20 +106,20 @@ export const funderGrantRows = sqliteTable("funder_grant_rows", {
   recipientCity: text("recipient_city"),
   recipientState: text("recipient_state"),
   recipientEin: text("recipient_ein"),
-  grantAmount: real("grant_amount"),
+  grantAmount: doublePrecision("grant_amount"),
   purpose: text("purpose"),
   rawText: text("raw_text"),
   extractionMethod: text("extraction_method").notNull(),
-  confidence: real("confidence"),
+  confidence: doublePrecision("confidence"),
 });
 
-export const opportunities = sqliteTable("opportunities", {
+export const opportunities = pgTable("opportunities", {
   ...baseColumns,
   organizationId: text("organization_id"),
   funderId: text("funder_id").notNull(),
   title: text("title").notNull(),
   cycleYear: integer("cycle_year"),
-  amountRequested: real("amount_requested"),
+  amountRequested: doublePrecision("amount_requested"),
   awardRange: text("award_range"),
   deadline: text("deadline"),
   submissionMethod: text("submission_method"),
@@ -122,18 +127,18 @@ export const opportunities = sqliteTable("opportunities", {
   portalUrl: text("portal_url"),
   portalDiscoveredAt: text("portal_discovered_at"),
   status: text("status").notNull(),
-  fitScore: real("fit_score"),
+  fitScore: doublePrecision("fit_score"),
   pursueDecision: text("pursue_decision"),
   rationale: text("rationale"),
-  evidenceCoveragePercent: real("evidence_coverage_percent"),
-  effortEstimateHours: real("effort_estimate_hours"),
+  evidenceCoveragePercent: doublePrecision("evidence_coverage_percent"),
+  effortEstimateHours: doublePrecision("effort_estimate_hours"),
   capacityFlag: text("capacity_flag"),
   owner: text("owner"),
   reviewer: text("reviewer"),
-  reportingBurdenScore: real("reporting_burden_score"),
+  reportingBurdenScore: doublePrecision("reporting_burden_score"),
 });
 
-export const requirements = sqliteTable("requirements", {
+export const requirements = pgTable("requirements", {
   ...baseColumns,
   opportunityId: text("opportunity_id").notNull(),
   questionText: text("question_text").notNull(),
@@ -147,7 +152,7 @@ export const requirements = sqliteTable("requirements", {
   approvalStatus: text("approval_status"),
 });
 
-export const evidenceLibrary = sqliteTable("evidence_library", {
+export const evidenceLibrary = pgTable("evidence_library", {
   ...baseColumns,
   programId: text("program_id"),
   title: text("title").notNull(),
@@ -155,12 +160,12 @@ export const evidenceLibrary = sqliteTable("evidence_library", {
   content: text("content").notNull(),
   sourceDocument: text("source_document"),
   collectedAt: text("collected_at"),
-  reliabilityRating: real("reliability_rating"),
+  reliabilityRating: doublePrecision("reliability_rating"),
   tags: text("tags"),
   embedding: text("embedding"),
 });
 
-export const documents = sqliteTable("documents", {
+export const documents = pgTable("documents", {
   ...baseColumns,
   organizationId: text("organization_id"),
   name: text("name").notNull(),
@@ -176,19 +181,19 @@ export const documents = sqliteTable("documents", {
   requiredByOpportunityIds: text("required_by_opportunity_ids"),
 });
 
-export const budgets = sqliteTable("budgets", {
+export const budgets = pgTable("budgets", {
   ...baseColumns,
   programId: text("program_id"),
   name: text("name").notNull(),
   fiscalYear: integer("fiscal_year"),
   budgetType: text("budget_type").notNull(),
   lineItems: text("line_items"),
-  totalRevenue: real("total_revenue"),
-  totalExpense: real("total_expense"),
+  totalRevenue: doublePrecision("total_revenue"),
+  totalExpense: doublePrecision("total_expense"),
   restrictedVsUnrestricted: text("restricted_vs_unrestricted"),
 });
 
-export const draftAnswers = sqliteTable("draft_answers", {
+export const draftAnswers = pgTable("draft_answers", {
   ...baseColumns,
   opportunityId: text("opportunity_id").notNull(),
   requirementId: text("requirement_id").notNull(),
@@ -199,10 +204,10 @@ export const draftAnswers = sqliteTable("draft_answers", {
   status: text("status").notNull(),
   reviewerComments: text("reviewer_comments"),
   revisionNotes: text("revision_notes"),
-  dnaMatchScore: real("dna_match_score"),
+  dnaMatchScore: doublePrecision("dna_match_score"),
 });
 
-export const tasks = sqliteTable("tasks", {
+export const tasks = pgTable("tasks", {
   ...baseColumns,
   opportunityId: text("opportunity_id"),
   requirementId: text("requirement_id"),
@@ -214,7 +219,7 @@ export const tasks = sqliteTable("tasks", {
   blockingDependency: text("blocking_dependency"),
 });
 
-export const reviews = sqliteTable("reviews", {
+export const reviews = pgTable("reviews", {
   ...baseColumns,
   opportunityId: text("opportunity_id").notNull(),
   draftAnswerId: text("draft_answer_id"),
@@ -225,7 +230,7 @@ export const reviews = sqliteTable("reviews", {
   approvedAt: text("approved_at"),
 });
 
-export const submissions = sqliteTable(
+export const submissions = pgTable(
   "submissions",
   {
     ...baseColumns,
@@ -237,7 +242,7 @@ export const submissions = sqliteTable(
     portalReference: text("portal_reference"),
     documentsIncluded: text("documents_included"),
     narrativesIncluded: text("narratives_included"),
-    budgetIncluded: integer("budget_included", { mode: "boolean" }),
+    budgetIncluded: boolean("budget_included"),
   },
   (table) => ({
     opportunityIdUniqueIdx: uniqueIndex("submissions_opportunity_id_unique").on(
@@ -246,7 +251,7 @@ export const submissions = sqliteTable(
   }),
 );
 
-export const submissionSessions = sqliteTable("submission_sessions", {
+export const submissionSessions = pgTable("submission_sessions", {
   ...baseColumns,
   organizationId: text("organization_id"),
   opportunityId: text("opportunity_id").notNull(),
@@ -259,15 +264,13 @@ export const submissionSessions = sqliteTable("submission_sessions", {
   storageStatePath: text("storage_state_path"),
   launchRequestedAt: text("launch_requested_at").notNull(),
   launchTriggeredAt: text("launch_triggered_at"),
-  finalSubmitAuthorized: integer("final_submit_authorized", { mode: "boolean" })
-    .notNull()
-    .$defaultFn(() => false),
+  finalSubmitAuthorized: boolean("final_submit_authorized").notNull().default(false),
   finalSubmitAuthorizedAt: text("final_submit_authorized_at"),
   reviewerName: text("reviewer_name"),
   reviewerNotes: text("reviewer_notes"),
 });
 
-export const submissionFieldMappings = sqliteTable("submission_field_mappings", {
+export const submissionFieldMappings = pgTable("submission_field_mappings", {
   ...baseColumns,
   organizationId: text("organization_id"),
   submissionSessionId: text("submission_session_id").notNull(),
@@ -283,13 +286,13 @@ export const submissionFieldMappings = sqliteTable("submission_field_mappings", 
   plannedValue: text("planned_value"),
   artifactTitle: text("artifact_title"),
   matchedPortalLabel: text("matched_portal_label"),
-  confidence: real("confidence"),
-  needsHumanReview: integer("needs_human_review", { mode: "boolean" }).notNull(),
+  confidence: doublePrecision("confidence"),
+  needsHumanReview: boolean("needs_human_review").notNull(),
   notes: text("notes"),
   lastAttemptedAt: text("last_attempted_at"),
 });
 
-export const submissionUploadArtifacts = sqliteTable("submission_upload_artifacts", {
+export const submissionUploadArtifacts = pgTable("submission_upload_artifacts", {
   ...baseColumns,
   organizationId: text("organization_id"),
   submissionSessionId: text("submission_session_id").notNull(),
@@ -308,7 +311,7 @@ export const submissionUploadArtifacts = sqliteTable("submission_upload_artifact
   notes: text("notes"),
 });
 
-export const portalFormSnapshots = sqliteTable("portal_form_snapshots", {
+export const portalFormSnapshots = pgTable("portal_form_snapshots", {
   ...baseColumns,
   organizationId: text("organization_id"),
   submissionSessionId: text("submission_session_id"),
@@ -322,7 +325,7 @@ export const portalFormSnapshots = sqliteTable("portal_form_snapshots", {
   capturedAt: text("captured_at").notNull(),
 });
 
-export const portalFieldProfiles = sqliteTable(
+export const portalFieldProfiles = pgTable(
   "portal_field_profiles",
   {
     ...baseColumns,
@@ -344,7 +347,7 @@ export const portalFieldProfiles = sqliteTable(
     lastMatchedAt: text("last_matched_at"),
     lastMappedFieldLabel: text("last_mapped_field_label"),
     lastFillAction: text("last_fill_action"),
-    lastConfidence: real("last_confidence"),
+    lastConfidence: doublePrecision("last_confidence"),
   },
   (table) => ({
     portalFieldProfileUniqueIdx: uniqueIndex("portal_field_profiles_scope_unique").on(
@@ -358,7 +361,7 @@ export const portalFieldProfiles = sqliteTable(
   }),
 );
 
-export const reportingCalendar = sqliteTable("reporting_calendar", {
+export const reportingCalendar = pgTable("reporting_calendar", {
   ...baseColumns,
   organizationId: text("organization_id"),
   opportunityId: text("opportunity_id").notNull(),
@@ -371,7 +374,7 @@ export const reportingCalendar = sqliteTable("reporting_calendar", {
   templateLink: text("template_link"),
 });
 
-export const lessons = sqliteTable("lessons", {
+export const lessons = pgTable("lessons", {
   ...baseColumns,
   organizationId: text("organization_id"),
   funderId: text("funder_id").notNull(),
@@ -379,21 +382,21 @@ export const lessons = sqliteTable("lessons", {
   feedbackText: text("feedback_text").notNull(),
   themes: text("themes"),
   recommendations: text("recommendations"),
-  appliesNextCycle: integer("applies_next_cycle", { mode: "boolean" }),
+  appliesNextCycle: boolean("applies_next_cycle"),
 });
 
-export const agentLogs = sqliteTable("agent_logs", {
+export const agentLogs = pgTable("agent_logs", {
   ...baseColumns,
   runId: text("run_id").notNull(),
   agentName: text("agent_name").notNull(),
   actionDescription: text("action_description").notNull(),
   sourceUrl: text("source_url"),
-  confidenceLevel: real("confidence_level"),
+  confidenceLevel: doublePrecision("confidence_level"),
   outputSummary: text("output_summary"),
-  followUpRequired: integer("follow_up_required", { mode: "boolean" }),
+  followUpRequired: boolean("follow_up_required"),
 });
 
-export const authTokens = sqliteTable("auth_tokens", {
+export const authTokens = pgTable("auth_tokens", {
   ...baseColumns,
   provider: text("provider").notNull(),
   accountId: text("account_id").notNull(),
@@ -402,7 +405,7 @@ export const authTokens = sqliteTable("auth_tokens", {
   expiresAt: text("expires_at"),
 });
 
-export const notionConnections = sqliteTable(
+export const notionConnections = pgTable(
   "notion_connections",
   {
     ...baseColumns,
@@ -421,7 +424,7 @@ export const notionConnections = sqliteTable(
   }),
 );
 
-export const sourceSnapshots = sqliteTable("source_snapshots", {
+export const sourceSnapshots = pgTable("source_snapshots", {
   ...baseColumns,
   sourceType: text("source_type").notNull(),
   sourceUrl: text("source_url").notNull(),

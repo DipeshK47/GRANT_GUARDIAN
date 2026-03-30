@@ -1,22 +1,40 @@
-import Database from "better-sqlite3";
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import { migrate } from "drizzle-orm/better-sqlite3/migrator";
+import "dotenv/config";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { Pool } from "pg";
 
-const databaseUrl = (process.env.DATABASE_URL ?? "file:./data/grant-guardian.db").replace(
-  /^file:/,
-  "",
-);
+const databaseUrl =
+  process.env.DATABASE_URL ?? "postgresql://postgres:postgres@127.0.0.1:54322/postgres";
 
-const sqlite = new Database(databaseUrl, {
-  timeout: 5_000,
+const resolveSslConfig = (value) => {
+  try {
+    const parsed = new URL(value);
+    const hostname = parsed.hostname.toLowerCase();
+    const sslMode = parsed.searchParams.get("sslmode")?.toLowerCase();
+    const isLocalHost = hostname === "localhost" || hostname === "127.0.0.1";
+
+    if (isLocalHost || sslMode === "disable") {
+      return undefined;
+    }
+
+    return {
+      rejectUnauthorized: false,
+    };
+  } catch {
+    return undefined;
+  }
+};
+
+const pool = new Pool({
+  connectionString: databaseUrl,
+  ssl: resolveSslConfig(databaseUrl),
 });
 
-sqlite.pragma("journal_mode = WAL");
-sqlite.pragma("busy_timeout = 5000");
-sqlite.pragma("foreign_keys = ON");
-
-migrate(drizzle(sqlite), {
-  migrationsFolder: "./apps/orchestrator/drizzle",
-});
-
-console.log(`Applied migrations to ${databaseUrl}`);
+try {
+  await migrate(drizzle(pool), {
+    migrationsFolder: "./apps/orchestrator/drizzle-postgres",
+  });
+  console.log(`Applied Postgres migrations to ${databaseUrl}`);
+} finally {
+  await pool.end();
+}

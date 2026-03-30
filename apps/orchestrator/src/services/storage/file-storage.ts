@@ -1,4 +1,5 @@
 import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { mkdir, writeFile } from "node:fs/promises";
 import { basename, resolve } from "node:path";
 import { dirname } from "node:path";
@@ -14,7 +15,7 @@ type LoggerLike = {
 };
 
 export type StoredFileDescriptor = {
-  provider: "local" | "s3";
+  provider: "local" | "s3" | "supabase";
   storageKey: string;
   localPath?: string | null;
   fileLink?: string | null;
@@ -65,6 +66,7 @@ const streamToBuffer = async (value: unknown) => {
 export class FileStorageService {
   private readonly logger: LoggerLike;
   private s3Client?: S3Client;
+  private supabaseClient?: SupabaseClient;
 
   constructor(
     private readonly config: AppEnv,
@@ -120,6 +122,34 @@ export class FileStorageService {
       };
     }
 
+    if (this.config.FILE_STORAGE_BACKEND === "supabase") {
+      const client = this.getSupabaseClient();
+      const bucket = normalizeText(this.config.SUPABASE_STORAGE_BUCKET);
+      if (!bucket) {
+        throw new Error(
+          "SUPABASE_STORAGE_BUCKET is required when FILE_STORAGE_BACKEND=supabase.",
+        );
+      }
+
+      const { error } = await client.storage.from(bucket).upload(storageKey, input.buffer, {
+        contentType: input.mimeType,
+        upsert: true,
+      });
+      if (error) {
+        throw new Error(`Supabase file upload failed: ${error.message}`);
+      }
+
+      return {
+        provider: "supabase",
+        storageKey,
+        localPath: null,
+        fileLink: this.buildSupabaseFileUrl(storageKey),
+        fileUrl: this.buildSupabaseFileUrl(storageKey),
+        byteSize: input.buffer.byteLength,
+        mimeType: input.mimeType,
+      };
+    }
+
     const uploadRoot = this.resolveProjectPath(this.config.UPLOAD_DIR);
     const absolutePath = resolve(uploadRoot, storageKey);
     await mkdir(resolve(absolutePath, ".."), { recursive: true });
@@ -145,6 +175,35 @@ export class FileStorageService {
     const provider = normalizeText(input.storageProvider) || "local";
     const normalizedKey = normalizeText(input.storageKey);
     const normalizedLink = normalizeText(input.fileLink);
+
+    if (provider === "supabase") {
+      const bucket = normalizeText(this.config.SUPABASE_STORAGE_BUCKET);
+      if (!bucket) {
+        throw new Error(
+          "SUPABASE_STORAGE_BUCKET is required when FILE_STORAGE_BACKEND=supabase.",
+        );
+      }
+      if (!normalizedKey) {
+        return null;
+      }
+
+      const client = this.getSupabaseClient();
+      const { data, error } = await client.storage.from(bucket).download(normalizedKey);
+      if (error) {
+        throw new Error(`Supabase file download failed: ${error.message}`);
+      }
+      if (!data) {
+        return null;
+      }
+
+      const buffer = Buffer.from(await data.arrayBuffer());
+      await mkdir(resolve(input.targetPath, ".."), { recursive: true });
+      await writeFile(input.targetPath, buffer);
+      return {
+        originalPath: null,
+        byteSize: buffer.byteLength,
+      };
+    }
 
     if (provider !== "s3") {
       const sourcePath = this.resolveLocalSourcePath(normalizedLink || normalizedKey);
@@ -240,6 +299,21 @@ export class FileStorageService {
     return `${endpoint.replace(/\/+$/, "")}/${bucket}/${storageKey}`;
   }
 
+  private buildSupabaseFileUrl(storageKey: string) {
+    const configuredBaseUrl = normalizeText(this.config.FILE_STORAGE_PUBLIC_BASE_URL);
+    if (configuredBaseUrl) {
+      return `${configuredBaseUrl.replace(/\/+$/, "")}/${storageKey}`;
+    }
+
+    const supabaseUrl = normalizeText(this.config.SUPABASE_URL);
+    const bucket = normalizeText(this.config.SUPABASE_STORAGE_BUCKET);
+    if (!supabaseUrl || !bucket) {
+      return null;
+    }
+
+    return `${supabaseUrl.replace(/\/+$/, "")}/storage/v1/object/public/${bucket}/${storageKey}`;
+  }
+
   private resolveLocalSourcePath(candidate?: string | null) {
     const normalized = normalizeText(candidate);
     if (!normalized || /^https?:\/\//i.test(normalized)) {
@@ -280,5 +354,26 @@ export class FileStorageService {
     }
 
     return this.s3Client;
+  }
+
+  private getSupabaseClient() {
+    if (!this.supabaseClient) {
+      const supabaseUrl = normalizeText(this.config.SUPABASE_URL);
+      const serviceRoleKey = normalizeText(this.config.SUPABASE_SERVICE_ROLE_KEY);
+      if (!supabaseUrl || !serviceRoleKey) {
+        throw new Error(
+          "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required when FILE_STORAGE_BACKEND=supabase.",
+        );
+      }
+
+      this.supabaseClient = createClient(supabaseUrl, serviceRoleKey, {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+        },
+      });
+    }
+
+    return this.supabaseClient;
   }
 }

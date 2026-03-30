@@ -23,7 +23,12 @@ const envSchema = z.object({
   APP_BASE_URL: z.string().url().default("http://localhost:4000"),
   WEB_BASE_URL: z.string().url().default("http://localhost:3000"),
   LOG_LEVEL: z.string().default("info"),
-  DATABASE_URL: z.string().default("file:./data/grant-guardian.db"),
+  DATABASE_URL: z
+    .string()
+    .default("postgresql://postgres:postgres@127.0.0.1:54322/postgres"),
+  SUPABASE_URL: z.string().url().optional().or(z.literal("")).default(""),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().default(""),
+  SUPABASE_STORAGE_BUCKET: z.string().default("documents"),
   ENCRYPTION_KEY: z.string().min(32),
   SESSION_SECRET: z.string().min(16),
   GEMINI_API_KEY: z.string().min(1),
@@ -52,7 +57,7 @@ const envSchema = z.object({
   SNAPSHOT_DIR: z.string().default("./data/snapshots"),
   UPLOAD_DIR: z.string().default("./data/uploads"),
   DOCUMENT_UPLOAD_MAX_BYTES: z.coerce.number().default(25 * 1024 * 1024),
-  FILE_STORAGE_BACKEND: z.enum(["local", "s3"]).default("local"),
+  FILE_STORAGE_BACKEND: z.enum(["local", "s3", "supabase"]).default("local"),
   FILE_STORAGE_KEY_PREFIX: z.string().default("grant-guardian"),
   FILE_STORAGE_PUBLIC_BASE_URL: z.string().default(""),
   FILE_STORAGE_BUCKET: z.string().default(""),
